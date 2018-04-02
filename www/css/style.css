@@ -1,1 +1,20 @@
 /* Empty. Add your own CSS if you like */
+.imgSize{
+    max-width: 100%;
+	width: 200px;
+	height: 350px;
+}
+
+.h200{
+	height: 200px;
+	overflow: scroll;
+}
+
+.p10{
+	padding: 10px;
+}
+
+.spinner svg {
+	width: 19% !important;
+	height: 85px !important;
+}

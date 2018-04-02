@@ -3,22 +3,53 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
 
-.run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-      // for form inputs)
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+(function () {
+	
+	'use strict';
 
-      // Don't remove this line unless you know what you are doing. It stops the viewport
-      // from snapping when text inputs are focused. Ionic handles this internally for
-      // a much nicer keyboard experience.
-      cordova.plugins.Keyboard.disableScroll(true);
-    }
-    if(window.StatusBar) {
-      StatusBar.styleDefault();
-    }
-  });
-})
+	var app = angular.module('camera', ['ionic', 'ngCordova']);
+
+	app.controller('cameraCtrl', function ($scope, $cordovaCamera, $ionicLoading){
+		$scope.displayImg = "http://siliconcoast.net/images/featured/Lasership-thumb.jpg";
+
+		$scope.snap = snap;
+		$scope.isPhotoTaken = false;
+		$scope.photo = "";
+		$scope.isShowing = false;
+
+		function snap() {
+			$scope.isPhotoTaken = true;
+			$scope.isShowing = true;
+			var options = {
+				destinationType: Camera.DestinationType.DATA_URL,
+				encodingType: Camera.EncodingType.JPEG,
+				correctOrientation: true,
+				saveToPhotoAlbum: false
+			};
+
+			$cordovaCamera.getPicture(options).then(function (data) {
+				$scope.photo = data;
+				$scope.displayImg = "data:image/jpeg;base64," + data;
+				$scope.isShowing = false;
+			}, function (err) {
+				console.log("ERROR: ", err);
+			});
+
+		}
+
+	});
+
+	app.run(function ($ionicPlatform) {
+		$ionicPlatform.ready(function () {
+			// if (window.cordova && window.cordova.plugins.Keyboard) {
+			// 	cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+			// 	cordova.plugins.Keyboard.disableScroll(true);
+			// }
+			if (window.StatusBar) {
+				StatusBar.styleDefault();
+			}
+		});
+	});
+
+})();
