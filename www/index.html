@@ -29,6 +29,8 @@
 
 	<!-- ngCordova -->
 	<script src="lib/ngCordova/dist/ng-cordova.js"></script>
+
+	<script src="lib/exif-js/exif.js"></script>
 	
 	<!-- cordova script (this will be a 404 during development) -->
 	<script src="cordova.js"></script>
@@ -47,15 +49,21 @@
 
 			<ion-spinner icon="lines" ng-if="isShowing" class="spinner-calm col-center"></ion-spinner>
 
+			<div id="allMetaDataSpan"></div>
+
 			<div class="list card">
 				<div class="item item-image">
-					<img alt="imgData" class="imgSize" ng-src="{{displayImg}}">
+					<img id="imag" alt="imgData" class="imgSize" ng-src="{{displayImg}}">
 				</div>
 			</div>
 
 			<div class="padding">
 				<button class="button button-block button-dark" ng-click="snap()">Snap</button>
 			</div>
+
+			<div class="padding">
+				<button class="button button-block button-dark" ng-click="takePic()">TAKE PIC</button>
+			</div>			
 
 			<div class="list card" ng-if="isPhotoTaken">
 				<div class="item item-divider">

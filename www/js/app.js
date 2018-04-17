@@ -18,36 +18,59 @@
 		$scope.photo = "";
 		$scope.isShowing = false;
 		$scope.hasDetails = false;
+		$scope.takePic = takePic;
+		
+		function getExif(img) {
+			console.log(img);
+			EXIF.getData(img, function() {
+				var allMetaData = EXIF.getAllTags(this);
+				var make = EXIF.getTag(this, "Make");
+				var model = EXIF.getTag(this, "Model");
+
+				console.log(allMetaData);
+				var allMetaDataSpan = document.getElementById("allMetaDataSpan");
+				allMetaDataSpan.innerHTML = JSON.stringify(allMetaData, null, "\t");
+			});
+		}
+
+		function takePic() {
+			var captureOptions = {
+				width: 300,
+				height: 400,
+				quality: 75
+			}
+
+			CameraPreview.takePicture(captureOptions, function(imgData){
+				CameraPreview.hide();
+				$scope.photo = imgData[0];
+				console.log(imgData[0]);
+				$scope.$apply(function(){
+					$scope.displayImg = "data:image/jpeg;base64," + $scope.photo;
+
+					setTimeout(function(){
+						getExif(document.getElementById('imag'));
+					}, 3000);
+
+				});
+			});
+		}
 
 		function snap() {
 			$scope.isPhotoTaken = true;
-			$scope.isShowing = true;
-			var options = {
-				quality: 75,
-				allowEdit: false,
-				targetWidth: 300,
-				targetHeight: 400,
-				cameraDirection: "BACK",
-				destinationType: Camera.DestinationType.DATA_URL,
-				encodingType: Camera.EncodingType.JPEG,
-				correctOrientation: true,
-				saveToPhotoAlbum: false
-			};
 
-			$cordovaCamera.getPicture(options).then(function (data) {
-				console.log(data);
-				var data = JSON.parse(data);
-				var metadata = JSON.parse(data.json_metadata);
-				console.log(metadata);
-				
-				$scope.photo = data.filename;
-				$scope.displayImg = "data:image/jpeg;base64," + data.filename;
-				$scope.isShowing = false;
-				$scope.hasDetails = true;
-				$scope.details = data.json_metadata;
-			}, function (err) {
-				console.log("ERROR: ", err);
-			});
+			let options = {
+				x: 0, 
+				y: 0, 
+				camera: CameraPreview.CAMERA_DIRECTION.BACK, 
+				width: window.screen.width, 
+				height: window.screen.height - 150, 
+				toBack: false,  // Takes the whole camera to back of html
+				previewDrag: false, 
+				tapFocus: true,
+				disableExifHeaderStripping: true
+			}
+
+			CameraPreview.startCamera(options);
 
 		}
 
