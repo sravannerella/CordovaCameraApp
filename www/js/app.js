@@ -27,7 +27,7 @@
 				allowEdit: false,
 				targetWidth: 300,
 				targetHeight: 400,
-				cameraDirection: "BACK",
+				cameraDirection: 0,
 				destinationType: Camera.DestinationType.DATA_URL,
 				encodingType: Camera.EncodingType.JPEG,
 				correctOrientation: true,
@@ -36,15 +36,27 @@
 
 			$cordovaCamera.getPicture(options).then(function (data) {
 				console.log(data);
-				var data = JSON.parse(data);
-				var metadata = JSON.parse(data.json_metadata);
-				console.log(metadata);
+				// var data = JSON.parse(data);
+				// var metadata = JSON.parse(data.json_metadata);
+				// console.log(metadata);
 				
-				$scope.photo = data.filename;
-				$scope.displayImg = "data:image/jpeg;base64," + data.filename;
+				$scope.photo = data;
+				$scope.displayImg = "data:image/jpeg;base64," + data;
 				$scope.isShowing = false;
-				$scope.hasDetails = true;
-				$scope.details = data.json_metadata;
+
+				// var img1 = document.getElementById("img1");
+				// console.log(img1);
+
+				EXIF.getData(data, function() {
+					var make = EXIF.getTag(this, "Make");
+					var model = EXIF.getTag(this, "Model");
+					console.log(make, model);
+					// var makeAndModel = document.getElementById("makeAndModel");
+					// makeAndModel.innerHTML = `${make} ${model}`;
+				});
+
+				// $scope.hasDetails = true;
+				// $scope.details = data.json_metadata;
 			}, function (err) {
 				console.log("ERROR: ", err);
 			});
