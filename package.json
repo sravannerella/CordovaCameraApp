@@ -9,6 +9,17 @@
     "gulp-sass": "^3.1.0"
   },
   "dependencies": {
-    "@ionic-native/camera": "^4.6.0"
+    "@ionic-native/camera": "^4.6.0",
+    "cordova-android": "~5.2.2",
+    "cordova-plugin-camera-with-exif": "^1.2.2",
+    "cordova-plugin-compat": "^1.2.0"
+  },
+  "cordova": {
+    "platforms": [
+      "android"
+    ],
+    "plugins": {
+      "cordova-plugin-camera-with-exif": {}
+    }
   }
 }

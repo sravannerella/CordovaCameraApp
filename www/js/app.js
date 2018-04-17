@@ -17,11 +17,17 @@
 		$scope.isPhotoTaken = false;
 		$scope.photo = "";
 		$scope.isShowing = false;
+		$scope.hasDetails = false;
 
 		function snap() {
 			$scope.isPhotoTaken = true;
 			$scope.isShowing = true;
 			var options = {
+				quality: 75,
+				allowEdit: false,
+				targetWidth: 300,
+				targetHeight: 400,
+				cameraDirection: "BACK",
 				destinationType: Camera.DestinationType.DATA_URL,
 				encodingType: Camera.EncodingType.JPEG,
 				correctOrientation: true,
@@ -29,9 +35,16 @@
 			};
 
 			$cordovaCamera.getPicture(options).then(function (data) {
-				$scope.photo = data;
-				$scope.displayImg = "data:image/jpeg;base64," + data;
+				console.log(data);
+				var data = JSON.parse(data);
+				var metadata = JSON.parse(data.json_metadata);
+				console.log(metadata);
+				
+				$scope.photo = data.filename;
+				$scope.displayImg = "data:image/jpeg;base64," + data.filename;
 				$scope.isShowing = false;
+				$scope.hasDetails = true;
+				$scope.details = data.json_metadata;
 			}, function (err) {
 				console.log("ERROR: ", err);
 			});
