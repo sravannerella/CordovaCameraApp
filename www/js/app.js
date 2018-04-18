@@ -19,6 +19,8 @@
 		$scope.isShowing = false;
 		$scope.hasDetails = false;
 		$scope.takePic = takePic;
+
+		var snapped = false;
 		
 		function getExif(img) {
 			console.log(img);
@@ -49,7 +51,7 @@
 
 					setTimeout(function(){
 						getExif(document.getElementById('imag'));
-					}, 3000);
+					}, 1000);
 
 				});
 			});
@@ -57,20 +59,25 @@
 
 		function snap() {
 			$scope.isPhotoTaken = true;
-
-			let options = {
-				x: 0, 
-				y: 0, 
-				camera: CameraPreview.CAMERA_DIRECTION.BACK, 
-				width: window.screen.width, 
-				height: window.screen.height - 150, 
-				toBack: false,  // Takes the whole camera to back of html
-				previewDrag: false, 
-				tapFocus: true,
-				disableExifHeaderStripping: true
+			if(snapped !== true){
+				let options = {
+					x: 0, 
+					y: 0, 
+					camera: CameraPreview.CAMERA_DIRECTION.BACK, 
+					width: window.screen.width, 
+					height: window.screen.height - 150, 
+					toBack: false,  // Takes the whole camera to back of html
+					previewDrag: false, 
+					tapFocus: true,
+					disableExifHeaderStripping: true
+				}
+				snapped = true;
+	
+				CameraPreview.startCamera(options);
+				CameraPreview.setFlashMode(CameraPreview.FLASH_MODE.AUTO);
+			} else {
+				CameraPreview.show();
 			}
-
-			CameraPreview.startCamera(options);
 
 		}
 
