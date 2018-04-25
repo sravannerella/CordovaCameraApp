@@ -18,9 +18,6 @@
 		$scope.photo = "";
 		$scope.isShowing = false;
 		$scope.hasDetails = false;
-		$scope.takePic = takePic;
-
-		var snapped = false;
 		
 		function getExif(img) {
 			console.log(img);
@@ -35,50 +32,21 @@
 			});
 		}
 
-		function takePic() {
-			var captureOptions = {
-				width: 300,
-				height: 400,
-				quality: 75
-			}
-
-			CameraPreview.takePicture(captureOptions, function(imgData){
-				CameraPreview.hide();
-				$scope.photo = imgData[0];
-				console.log(imgData[0]);
-				$scope.$apply(function(){
-					$scope.displayImg = "data:image/jpeg;base64," + $scope.photo;
-
-					setTimeout(function(){
-						getExif(document.getElementById('imag'));
-					}, 1000);
-
-				});
-			});
-		}
-
 		function snap() {
-			$scope.isPhotoTaken = true;
-			if(snapped !== true){
-				let options = {
-					x: 0, 
-					y: 0, 
-					camera: CameraPreview.CAMERA_DIRECTION.BACK, 
-					width: window.screen.width, 
-					height: window.screen.height - 150, 
-					toBack: false,  // Takes the whole camera to back of html
-					previewDrag: false, 
-					tapFocus: true,
-					disableExifHeaderStripping: true
-				}
-				snapped = true;
-	
-				CameraPreview.startCamera(options);
-				CameraPreview.setFlashMode(CameraPreview.FLASH_MODE.AUTO);
-			} else {
-				CameraPreview.show();
-			}
 
+			// CameraPreview.takePicture(captureOptions, function(imgData){
+			// 	CameraPreview.hide();
+			// 	$scope.photo = imgData[0];
+			// 	console.log(imgData[0]);
+			// 	$scope.$apply(function(){
+			// 		$scope.displayImg = "data:image/jpeg;base64," + $scope.photo;
+
+			// 		setTimeout(function(){
+			// 			getExif(document.getElementById('imag'));
+			// 		}, 1000);
+
+			// 	});
+			// });
 		}
 
 	});
@@ -92,6 +60,31 @@
 			if (window.StatusBar) {
 				StatusBar.styleDefault();
 			}
+
+			var objCanvas = document.getElementById("camera");
+			CanvasCamera.initialize(objCanvas);
+			console.log(CanvasCamera);
+
+			let options = {
+				quality : 75, 
+				destinationType : CanvasCamera.DestinationType.DATA_URL,
+				sourceType : CanvasCamera.PictureSourceType.CAMERA,
+				allowEdit : false,
+				encodingType: CanvasCamera.EncodingType.JPEG,
+				correctOrientation: true,
+				saveToPhotoAlbum: false,
+				width: 300,
+				height: 400
+			}
+			
+			// CanvasCamera.setCameraPosition(CanvasCamera.CameraPosition.BACK);
+			// CanvasCamera.setFlashMode(CanvasCamera.FlashMode.ON);
+			CanvasCamera.start(options);
+
+			CanvasCamera.takePicture(function(data){
+				console.log(data);
+			});
+
 		});
 	});
 
