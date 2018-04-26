@@ -29,6 +29,8 @@
 
 	<!-- ngCordova -->
 	<script src="lib/ngCordova/dist/ng-cordova.js"></script>
+
+	<script src="lib/exif-js/exif.js"></script>
 	
 	<!-- cordova script (this will be a 404 during development) -->
 	<script src="cordova.js"></script>
@@ -49,20 +51,33 @@
 
 			<div class="list card">
 				<div class="item item-image">
-					<img alt="imgData" class="imgSize" ng-src="{{displayImg}}">
+					<img alt="imgData" id="imag" class="imgSize" ng-src="{{displayImg}}">
 				</div>
 			</div>
 
-			<div class="padding">
-				<button class="button button-block button-dark" ng-click="snap()">Snap</button>
+			<div class="padding" ng-if="!isPhotoTaken">
+				<button class="button button-block button-dark" ng-click="snap()">Capture</button>
+			</div>
+
+			<div class="padding" ng-if="isPhotoTaken">
+				<button class="button button-block button-dark" ng-click="complete()">Complete</button>
 			</div>
 
 			<div class="list card" ng-if="isPhotoTaken">
 				<div class="item item-divider">
 					Image in base64
 				</div>
-				<div class="item item-text-wrap h200 p10">
+				<div class="item item-text-wrap h100 p10">
 					{{photo}}
+				</div>
+			</div>
+
+			<div class="list card" ng-if="hasDetails">
+				<div class="item item-divider">
+					BASE64 IMAGE
+				</div>
+				<div class="item item-text-wrap h200 p10">
+					{{base64}}
 				</div>
 			</div>
 

@@ -16,35 +16,69 @@
 		$scope.snap = snap;
 		$scope.isPhotoTaken = false;
 		$scope.photo = "";
+		$scope.base64 = "";
+		$scope.complete = complete;
 		$scope.isShowing = false;
 		$scope.hasDetails = false;
+
+		function getExif(img) {
+			EXIF.getData(img, function() {
+				var allMetaData = EXIF.getAllTags(this);
+
+				$scope.hasDetails = true;
+				$scope.details = allMetaData;
+
+				var canvas = document.createElement("canvas");
+				canvas.width = img.width;
+				canvas.height = img.height;
+				var ctx = canvas.getContext('2d');
+				ctx.drawImage(img, 0, 0);
+				var dataUri = canvas.toDataURL('image/jpeg');
+				$scope.base64 = dataUri;
+
+				$scope.$apply();
+			});
+		}
+
+		function complete() {
+			$scope.isPhotoTaken = false;
+			$scope.photo = "";
+			$scope.base64 = "";
+			$scope.details = "";
+			$scope.isShowing = false;
+			$scope.hasDetails = false;
+			$scope.displayImg = "http://siliconcoast.net/images/featured/Lasership-thumb.jpg";
+
+			$cordovaCamera.cleanup().then(function(data){
+				console.log("CAMERA CLEAN UP");
+			}, function(err) {
+				console.log("CAMERA FAILED CLEAN UP");
+			});
+		}
 
 		function snap() {
 			$scope.isPhotoTaken = true;
 			$scope.isShowing = true;
 			var options = {
-				quality: 75,
+				quality: 50,
 				allowEdit: false,
 				targetWidth: 300,
 				targetHeight: 400,
 				cameraDirection: "BACK",
-				destinationType: Camera.DestinationType.DATA_URL,
+				destinationType: Camera.DestinationType.FILE_URI,
 				encodingType: Camera.EncodingType.JPEG,
 				correctOrientation: true,
 				saveToPhotoAlbum: false
 			};
 
 			$cordovaCamera.getPicture(options).then(function (data) {
-				console.log(data);
-				var data = JSON.parse(data);
-				var metadata = JSON.parse(data.json_metadata);
-				console.log(metadata);
-				
-				$scope.photo = data.filename;
-				$scope.displayImg = "data:image/jpeg;base64," + data.filename;
+				$scope.photo = data;
+				$scope.displayImg = data;
 				$scope.isShowing = false;
-				$scope.hasDetails = true;
-				$scope.details = data.json_metadata;
+				
+				setTimeout(function(){
+					getExif(document.getElementById('imag'));
+				}, 1000);
 			}, function (err) {
 				console.log("ERROR: ", err);
 			});
@@ -55,10 +89,6 @@
 
 	app.run(function ($ionicPlatform) {
 		$ionicPlatform.ready(function () {
-			// if (window.cordova && window.cordova.plugins.Keyboard) {
-			// 	cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-			// 	cordova.plugins.Keyboard.disableScroll(true);
-			// }
 			if (window.StatusBar) {
 				StatusBar.styleDefault();
 			}
